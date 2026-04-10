@@ -12,7 +12,7 @@
     color: #dc3545;
 
     .icons {
-      div {
+      .icon {
         &:first-of-type {
           display: none;
         }
@@ -27,18 +27,17 @@
   .icons {
     display: inline-block;
     color: #dc3545;
+    border-bottom: 1px solid $white;
     background: $white;
 
     &.top {
       background: #f1f1f1;
-
-      div {
-        transform: translateY(-5px);
-      }
     }
 
-    div {
-      transform: translateY(10px);
+    .icon {
+      display: inline-block;
+      position: relative;
+      top: 0.6em;
 
       &:last-of-type {
         display: none;
@@ -48,6 +47,15 @@
     .feather {
       width: 22px;
       height: 22px;
+    }
+  }
+
+  &.indication-link {
+    border-bottom: 2px solid #dc3545;
+
+    .icons {
+      border-bottom: 2px solid #fff59d;
+      background: none;
     }
   }
 }
@@ -129,6 +137,11 @@
         background-color: #aaa;
       }
     }
+
+    .indication .icons {
+      border-bottom: 1px solid #f1f1f1;
+      background: #f1f1f1;
+    }
   }
 
   // WINDOW - CONTENT
@@ -172,9 +185,27 @@
   }
 }
 
-
 .indication-link {
-  color: $black;
   border-bottom: 2px solid $black;
+  color: $black;
   cursor: pointer;
+
+  a {
+    color: $black;
+  }
+
+  &:hover, a:hover {
+    text-decoration: none;
+    border-bottom: 0;
+    color: $black;
+  }
+}
+
+.indication .indication-link {
+  border-bottom: 2px solid #dc3545;
+  cursor: pointer;
+
+  &:hover {
+    color: #dc3545;
+  }
 }

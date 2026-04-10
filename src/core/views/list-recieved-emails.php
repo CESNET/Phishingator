@@ -14,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($phishingEmails as $i => $phishingEmail): ?>
+    <?php foreach ($_phishingEmails as $i => $phishingEmail): ?>
       <tr>
         <td>
           <abbr title="Pořadí, v jakém byl cvičný phishing odeslán" class="initialism"><?= (count($phishingEmails) - $i) ?></abbr>

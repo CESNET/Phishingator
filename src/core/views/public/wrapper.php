@@ -18,7 +18,7 @@
   <link rel="icon" type="image/png" href="/favicon.png">
 
   <link rel="stylesheet" href="/<?= CORE_DIR_EXTENSIONS ?>/bootstrap-4.6.2/bootstrap.min.css">
-  <link rel="stylesheet" href="/style-intro.css">
+  <link rel="stylesheet" href="/style-intro.css?20260410">
 </head>
 <body>
   <header>

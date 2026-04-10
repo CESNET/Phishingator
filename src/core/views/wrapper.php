@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link href="/<?= CORE_DIR_EXTENSIONS ?>/bootstrap-4.6.2/bootstrap.min.css" rel="stylesheet">
-    <link href="/style.css" rel="stylesheet">
+    <link href="/style.css?20260410" rel="stylesheet">
   </head>
 
   <body>
@@ -141,10 +141,6 @@
     <script nonce="<?= HTTP_HEADER_CSP_NONCE ?>">
       $('#phishing-email-sender-email').highlightTextarea({
         words: ['<?= VAR_RECIPIENT_EMAIL ?>']
-      });
-
-      $('#phishing-email-body').highlightTextarea({
-        words: ['<?= VAR_RECIPIENT_USERNAME ?>', '<?= VAR_RECIPIENT_EMAIL ?>', '<?= VAR_RECIPIENT_FULLNAME ?>', '<?= VAR_RECIPIENT_FIRSTNAME ?>', '<?= VAR_RECIPIENT_SURNAME ?>', '<?= VAR_DATE_CZ ?>', '<?= VAR_DATE_EN ?>', '<?= VAR_URL ?>']
       });
     </script>
     <?php elseif ($currentSection == 'phishing-websites'): ?>

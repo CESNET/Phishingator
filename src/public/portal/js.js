@@ -402,24 +402,48 @@ $('.insert-variable').on('click', function() {
 
 // PHISHING EMAILS
 $('.phishing-email-variables code').on('click', function() {
-  const input = document.getElementById('phishing-email-body');
-  let variable = this.dataset.var;
+  const textareaId = 'phishing-email-body';
+  const editor = tinymce.get(textareaId);
 
-  const selectedText = input.value.substring(input.selectionStart, input.selectionEnd);
+  let value = this.dataset.var;
+  const type = this.dataset.type || 'variable';
 
-  if (selectedText) {
-    variable = variable.replace('text', selectedText);
+  if (editor) {
+    const selectedText = editor.selection.getContent({ format: 'text' });
+
+    if (selectedText && type === 'variable') {
+      value = value.replace('text', selectedText);
+    }
+
+    if (type === 'html') {
+      editor.selection.setContent(value + ' ');
+    }
+    else {
+      const variableNode = createVariableNode(value);
+      editor.selection.setContent(variableNode.outerHTML + ' ');
+    }
+
+    editor.focus();
   }
+  else {
+    const input = document.getElementById(textareaId);
 
-  const cursorPos = input.selectionStart;
-  const cursorPosAfter = cursorPos + variable.length;
+    const selectedText = input.value.substring(input.selectionStart, input.selectionEnd);
 
-  const textBefore = input.value.substring(0, cursorPos);
-  const textAfter = input.value.substring(input.selectionEnd);
+    if (selectedText) {
+      value = value.replace('text', selectedText);
+    }
 
-  input.value = textBefore + variable + textAfter;
+    const cursorPos = input.selectionStart;
+    const cursorPosAfter = cursorPos + value.length;
 
-  setSelectionRange(input, cursorPosAfter, cursorPosAfter);
+    const textBefore = input.value.substring(0, cursorPos);
+    const textAfter = input.value.substring(input.selectionEnd);
+
+    input.value = textBefore + value + textAfter;
+
+    setSelectionRange(input, cursorPosAfter, cursorPosAfter);
+  }
 });
 
 function setSelectionRange(input, selectionStart, selectionEnd) {

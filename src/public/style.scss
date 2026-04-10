@@ -383,15 +383,28 @@ form.active .form-row {
 }
 
 .email-preview {
-  .text-monospace {
-    font-size: 1rem;
+  table {
+    border-collapse: collapse;
   }
 
-  .variable {
-    background: #ffff00;
+  td, th {
+    font-size: 14px;
+    padding: 6px;
+    vertical-align: top;
+    border: 1px solid #ccc;
+  }
+
+  blockquote {
+    margin: 10px 0;
+    padding-left: 8px;
+    border-left: 2px solid #ccc;
+  }
+
+  .email-variable {
+    font-weight: bold;
+    background-color: #fff59d;
   }
 }
-
 
 // SECTION: USERS
 .pagination select {

@@ -31,7 +31,7 @@
       ];
 
       $modelUser = new UsersModel();
-      $this->user = $modelUser->getUser(PermissionsModel::getUserId());
+      $this->user = $modelUser->getUser(PermissionsModel::getUserId(), true);
 
       if (isset($_GET['action'])) {
         $id = isset($_GET['id']) ? get_number_from_get_string($_GET['id']) : false;
@@ -86,6 +86,8 @@
       $model->initForm($formData['inputsNames'], $formData['formPrefix'], $formData['dbTable']);
       $this->initViewData($model, ACT_NEW, $formData['formPrefix']);
 
+      $this->setViewData('phishingEmailVariables', json_encode($model->getEmailBodyVariables()));
+
       if (isset($_POST[$model->formPrefix . $this->getData('action')])) {
         try {
           $model->load($_POST);
@@ -118,6 +120,7 @@
 
       $model->initForm($formData['inputsNames'], $formData['formPrefix'], $formData['dbTable']);
       $this->setViewData('phishingEmail', $model->getPhishingEmail($idEmail));
+      $this->setViewData('phishingEmailVariables', json_encode($model->getEmailBodyVariables()));
 
       // Ověření existence záznamu.
       $this->checkRecordExistence($this->getData('phishingEmail'));
@@ -215,10 +218,6 @@
       $modelIndication->initForm($formData['inputsNames'], $formData['formPrefix'], $formData['dbTable']);
       $this->initViewData($modelIndication, ACT_INDICATIONS, $formData['formPrefix']);
 
-      // Získání seznamu indicií.
-      $emailIndications = $modelIndication->getEmailIndications($idEmail);
-      $this->setViewData('emailIndications', $emailIndications);
-
       // Získání e-mailu pro HTML náhled a následné kontroly.
       $phishingEmail = $model->getPhishingEmail($idEmail);
 
@@ -228,13 +227,12 @@
       // Uložení čistého těla e-mailu (bez vložených HTML indicií apod.) do modelu pro následné kontroly.
       $modelIndication->email = $phishingEmail['body'];
 
-      // Dodatečné ošetření proti XSS (nutné až nyní kvůli předchozímu příkazu při uložení k indicii).
-      $phishingEmail = self::escapeOutput($phishingEmail);
-
       // Personalizace e-mailu podle přihlášeného uživatele.
-      $phishingEmail = $model->personalizePhishingEmail($phishingEmail, null, $emailIndications, true);
+      $phishingEmail = $model->preparePhishingEmail($phishingEmail, null, true, true);
 
       $this->setViewData('phishingEmail', $phishingEmail);
+      $this->setViewData('emailIndications', $phishingEmail['indications']);
+      $this->setViewData('existsUrlIndication', EmailIndicationsModel::findIndicationIdByExpression($phishingEmail['indications'], VAR_URL) !== null);
 
       // Přidání nové indicie.
       if (isset($_POST[$modelIndication->formPrefix . ACT_NEW])) {
@@ -337,13 +335,13 @@
       }
 
       // Získání vyplněných informací o e-mailu z POST.
-      $phishingEmail = self::escapeOutput($model->makePhishingEmail());
+      $phishingEmail = $model->makePhishingEmail();
 
       // Ověření existence záznamu.
       $this->checkRecordExistence($phishingEmail);
 
       // Personalizace e-mailu podle přihlášeného uživatele.
-      $phishingEmail = $model->personalizePhishingEmail($phishingEmail, $this->user, false, true);
+      $phishingEmail = $model->preparePhishingEmail($phishingEmail, $this->user, false, true);
 
       $this->setViewData('email', $phishingEmail);
     }
@@ -359,13 +357,13 @@
       $this->setTitle('Náhled podvodného e-mailu');
       $this->setView('preview-phishing-email');
 
-      $phishingEmail = self::escapeOutput($model->getPhishingEmail($idEmail));
+      $phishingEmail = $model->getPhishingEmail($idEmail);
 
       // Ověření existence záznamu.
       $this->checkRecordExistence($phishingEmail);
 
       // Personalizace e-mailu podle přihlášeného uživatele.
-      $phishingEmail = $model->personalizePhishingEmail($phishingEmail, $this->user);
+      $phishingEmail = $model->preparePhishingEmail($phishingEmail, $this->user);
 
       $this->setViewData('email', $phishingEmail);
     }

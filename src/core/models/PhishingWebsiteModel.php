@@ -658,6 +658,8 @@
      * @return string                  Sestavená URL adresa na podvodnou stránku
      */
     public static function makeWebsiteUrl($websiteUrl, $varReplace = null) {
+      $websiteUrl = Controller::decodeHtmlEntities($websiteUrl);
+
       $hostname = get_hostname_from_url($websiteUrl);
       $afterHostnamePosition = mb_strpos($websiteUrl, $hostname) + mb_strlen($hostname);
 
@@ -697,7 +699,7 @@
         $websiteUrl = str_replace(VAR_RECIPIENT_URL, $varReplace, $websiteUrl);
       }
 
-      return $websiteUrl;
+      return Controller::escapeOutput($websiteUrl);
     }
 
 

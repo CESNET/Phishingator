@@ -69,6 +69,9 @@
         exit();
       }
 
+      // Získání dodatečných informací o uživateli.
+      $user = array_merge($user, UsersModel::getUserFullname($user['username']));
+
       // Vyžádání screenshotu podvodné stránky.
       if (isset($_GET[ACT_PHISHING_IMG])) {
         $websiteModel = new PhishingWebsiteModel();
@@ -82,23 +85,20 @@
       $volunteer = UsersModel::getUserEmailLimit($user['id_user']);
       $this->setViewData('volunteer', $volunteer['recieve_email'] == 1);
 
-      // Získání detailů o e-mailu a ošetření pro výpis.
-      $phishingEmail = self::escapeOutput(RecievedEmailModel::getRecievedPhishingEmail($idCampaign, $campaign['id_email'], $user['id_user']));
+      // Získání detailů o e-mailu.
+      $phishingEmail = RecievedEmailModel::getRecievedPhishingEmail($idCampaign, $campaign['id_email'], $user['id_user']);
 
       // Ověření existence záznamu.
       $this->checkRecordExistence($phishingEmail);
 
       // Personalizace e-mailu podle uživatele.
-      $phishingEmail = PhishingEmailModel::personalizePhishingEmail($phishingEmail, $user, true);
+      $phishingEmail = PhishingEmailModel::preparePhishingEmail($phishingEmail, $user);
 
-      // Nalezení indicie, která souvisí s podvodnou stránkou.
-      if (isset($phishingEmail['indications'])) {
-        foreach ($phishingEmail['indications'] as $indication) {
-          if ($indication['expression'] == VAR_URL) {
-            $website['indication'] = (!empty($indication['description'])) ? $indication['description'] : $indication['title'];
-            break;
-          }
-        }
+      // Získání indicie, která souvisí s podvodnou stránkou.
+      $websiteIndication = EmailIndicationsModel::findIndicationByExpression($phishingEmail['indications'], VAR_URL);
+
+      if ($websiteIndication !== null) {
+        $website['indication'] = (!empty($websiteIndication['description'])) ? $websiteIndication['description'] : $websiteIndication['title'];
       }
 
       $phishingEmail['url'] = PhishingWebsiteModel::makeWebsiteUrl($phishingEmail['url'], WebsitePrependerModel::makeUserWebsiteId($idCampaign, $idUser));
@@ -113,7 +113,7 @@
       $domainPosition = mb_strpos($phishingEmail['url'], $website['domain']);
 
       $website['url_before_domain'] = mb_substr($phishingEmail['url'], 0, $domainPosition);
-      $website['url_after_domain'] = str_replace(VAR_RECIPIENT_URL, 'id', mb_substr($phishingEmail['url'], $domainPosition + mb_strlen($website['domain'])));
+      $website['url_after_domain'] = Controller::decodeHtmlEntities(mb_substr($phishingEmail['url'], $domainPosition + mb_strlen($website['domain'])));
 
       $website['image_src'] = '/' . ACT_PHISHING_TEST . '/' . self::escapeOutput($_GET['id']) . '?' . ACT_PHISHING_IMG;
 

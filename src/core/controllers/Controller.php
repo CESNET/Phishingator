@@ -179,6 +179,17 @@
 
 
     /**
+     * Vrátí řetězec s dekódovanými HTML entitami.
+     *
+     * @param string $string           Řetězec s HTML entitami
+     * @return string                  Řetězec s dekódovanými HTML entitami
+     */
+    public static function decodeHtmlEntities($string) {
+      return html_entity_decode($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+
+    /**
      * Přidá do seznamu nezobrazených systémových zpráv další položku.
      *
      * @param string $type             Typ systémové zprávy
@@ -407,7 +418,7 @@
      * @return void
      */
     public function checkRecordExistence($record) {
-      if (empty($record)) {
+      if (empty($record) || empty(array_filter($record))) {
         $this->addMessage(MSG_ERROR, 'Zvolený záznam neexistuje.');
         $this->redirect($this->urlSection);
       }

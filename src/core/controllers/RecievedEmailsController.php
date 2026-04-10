@@ -41,10 +41,13 @@
 
       // Personalizace a dodatečné úpravy každého z e-mailů.
       foreach ($records as $key => $email) {
-        $records[$key]['sender_name'] = self::escapeOutput($email['sender_name']);
+        // Získání uživatelského odkazu na vzdělávací stránku.
         $records[$key]['code'] = WebsitePrependerModel::makeUserWebsiteId($email['id_campaign'], $user['url']);
 
-        $records[$key] = PhishingEmailModel::personalizePhishingEmail($records[$key], $user, false);
+        // Získání uživatelské reakce na e-mail.
+        $records[$key]['user_state'] = CampaignModel::getUserResponse($email['id_campaign'], $user['id_user']);
+
+        $records[$key] = PhishingEmailModel::preparePhishingEmail($records[$key], $user, false);
       }
 
       $this->setViewData('phishingEmails', $records);

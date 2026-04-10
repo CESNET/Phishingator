@@ -82,52 +82,44 @@
               continue;
             }
 
-            $user = array_merge($user, UsersModel::getUserFullname($user['username'], $ldap));
-
             // Ověření, zdali nedošlo v rámci kampaně k odeslání e-mailu stejnému uživateli někdy dříve.
             if ($this->isEmailSent($campaign['id_campaign'], $user['id_user'])) {
               continue;
             }
 
-            // Pokud byl e-mail odesílatele u předchozí iterace stejný jako e-mail příjemce, provést vyresetování.
-            if (isset($senderEmailMe)) {
-              $campaign['sender_email'] = VAR_RECIPIENT_EMAIL;
-            }
+            // Získání dodatečných informací o uživateli.
+            $user = array_merge($user, UsersModel::getUserFullname($user['username'], $ldap));
 
-            // Změnit odesílatele na e-mail příjemce, pokud byl tak podvodný e-mail vytvořen.
-            if ($campaign['sender_email'] == VAR_RECIPIENT_EMAIL) {
-              $senderEmailMe = true;
-              $campaign['sender_email'] = $recipient;
-            }
+            // E-mail, který se bude rozesílat.
+            $email = [
+              'body' => $campaign['body'],
+              'url' => $campaign['url_protocol'] . $campaign['url'],
+              'id_campaign' => $campaign['id_campaign'],
+              'sender_email' => $campaign['sender_email'],
+              'sender_name' => $campaign['sender_name'],
+              'html' => $campaign['html']
+            ];
 
-            // Personalizace těla e-mailu na základě příjemce.
-            $campaign['body_personalized'] = PhishingEmailModel::personalizeEmailBody(
-              $user, $campaign['body'], $campaign['url_protocol'] . $campaign['url'], $campaign['id_campaign']
+            // Personalizace e-mailu na základě příjemce.
+            $emailPersonalized = PhishingEmailModel::preparePhishingEmail(
+              $email, $user, false, false, $campaign['html']
             );
-
-            // Vložení povolených HTML tagů do těla e-mailu, pokud se má jednat o HTML e-mail.
-            if ($campaign['html']) {
-              $campaign['body_personalized'] = PhishingEmailModel::insertHTMLtags($campaign['body_personalized']);
-
-              // Nahrazení symbolů nového řádku za odřádkování pomocí HTML.
-              $campaign['body_personalized'] = PhishingEmailModel::insertHTMLnewLines($campaign['body_personalized']);
-            }
 
             Logger::info('Phishing e-mail ready to send.', [
                 'id_campaign' => $campaign['id_campaign'],
                 'id_user' => $user['id_user'],
-                'sender' => PhishingEmailModel::formatEmailSender($campaign['sender_email'], $campaign['sender_name']),
-                'recipient' => Controller::escapeOutput($recipient),
-                'subject' => Controller::escapeOutput($campaign['subject']),
-                'body' => Controller::escapeOutput($campaign['body_personalized']),
+                'sender' => $emailPersonalized['sender'],
+                'recipient' => $recipient,
+                'subject' => $campaign['subject'],
+                'body' => $emailPersonalized['body'],
                 'html' => $campaign['html']
               ]
             );
 
             // Odeslání e-mailu.
             $mailResult = $this->sendEmail(
-              $campaign['sender_email'], $campaign['sender_name'], $recipient,
-              $campaign['subject'], $campaign['body_personalized'], $campaign['html']
+              $emailPersonalized['sender_email'], $campaign['sender_name'], $recipient,
+              $campaign['subject'], $emailPersonalized['body'], $campaign['html']
             );
 
             // Uložení záznamu o tom, zda se e-mail podařilo odeslat.

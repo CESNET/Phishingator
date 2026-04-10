@@ -41,7 +41,7 @@
     header('X-Content-Type-Options: nosniff');
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header("Permissions-Policy: accelerometer=(); ambient-light-sensor=(); autoplay=(); battery=(); camera=(); display-capture=(); document-domain=(); encrypted-media=(); fullscreen=(); gamepad=(); geolocation=(); gyroscope=(); layout-animations=(); magnetometer=(); microphone=(); midi=(); payment=(); picture-in-picture=(); speaker-selection=(); usb=(); web-share=(); xr-spatial-tracking=()");
-    header("Content-Security-Policy: default-src 'self'; upgrade-insecure-requests; script-src 'self' 'nonce-" . HTTP_HEADER_CSP_NONCE . "'; font-src 'self' data: fonts.gstatic.com; style-src 'self' fonts.googleapis.com; img-src 'self' data:");
+    header("Content-Security-Policy: default-src 'self'; upgrade-insecure-requests; script-src 'self' 'nonce-" . HTTP_HEADER_CSP_NONCE . "'; font-src 'self' data: fonts.gstatic.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; img-src 'self' data:");
   }
 
 
@@ -221,6 +221,17 @@
    */
   function remove_new_line_symbols($string) {
     return preg_replace('/\r\n|[\r\n]/', '', trim($string));
+  }
+
+
+  /**
+   * Normalizuje konce řádků v textu na jednotný formát (\n).
+   *
+   * @param string $text             Vstupní text
+   * @return string                  Text s normalizovanými konci řádků
+   */
+  function normalize_new_lines($text) {
+    return str_replace(["\r\n", "\r"], "\n", $text);
   }
 
 

@@ -89,18 +89,26 @@
     /**
      * Uloží do instance a zároveň vrátí (z databáze) informace o uživateli na základě jeho ID.
      *
-     * @param int $id                  ID uživatele.
-     * @return array                   Pole s informacemi o uživateli.
+     * @param int $id                  ID uživatele
+     * @param bool $getFullname        TRUE, pokud se mají z LDAP vrátit další data (jméno a příjmení) o uživateli, jinak FALSE (výchozí)
+     * @return array                   Pole s informacemi o uživateli
      */
-    public function getUser($id) {
-      $this->dbRecordData = Database::querySingle('
+    public function getUser($id, $getFullname = false) {
+      $user = Database::querySingle('
               SELECT `id_user`, `id_user_group`, `url`, `username`, `email`, `departments`
               FROM `phg_users`
               WHERE `id_user` = ?
               AND `visible` = 1
       ', $id);
 
-      return $this->dbRecordData;
+      if ($getFullname && isset($user['username'])) {
+        // Získání jména a příjmení uživatele z LDAP.
+        $user = array_merge($user, UsersModel::getUserFullname($user['username']));
+      }
+
+      $this->dbRecordData = $user;
+
+      return $user;
     }
 
 

@@ -171,7 +171,10 @@ services:
       - ldap-net
 
   waf:
-    image: owasp/modsecurity-crs:4-apache-alpine-202506050606
+    build:
+      context: .
+      dockerfile: docker/waf/Dockerfile
+    image: ${CI_REGISTRY_IMAGE}/phishingator_waf:${CI_COMMIT_REF_SLUG}
     container_name: phishingator-${ORG}-waf
     restart: always
     depends_on:

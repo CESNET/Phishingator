@@ -76,6 +76,18 @@
   </div>
 </form>
 
+<?php if (!$existsUrlIndication): ?>
+<div class="alert alert-with-icon alert-info" role="alert">
+  <div class="alert-icon pr-1">
+    <span data-feather="link"></span>
+  </div>
+  <div>
+    <h4 class="alert-heading">Indicie k&nbsp;podvodnému odkazu</h4>
+    Nezapomeňte přidat indicii k&nbsp;podvodnému odkazu &ndash; stačí uvést jako podezřelý text proměnnou <code class="replace-variable cursor-pointer" data-input="#<?= $formPrefix ?>expression" data-var="<?= VAR_URL ?>"><?= VAR_URL ?></code> a&nbsp;vyplnit název indicie. Po přidání dojde k&nbsp;vyznačení indicie u&nbsp;odkazu na podvodnou stránku.
+  </div>
+</div>
+<?php endif; ?>
+
 <?php if (count($emailIndications) > 0): ?>
 <hr>
 

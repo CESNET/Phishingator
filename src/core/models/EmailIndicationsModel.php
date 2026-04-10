@@ -260,15 +260,37 @@
 
 
     /**
-     * Vrátí pole proměnných, které se mohou používat pro lokalizaci indicií.
+     * Vrátí data o indicii na základě klíče indicie.
      *
-     * @return array                   Pole proměnných.
+     * @param array $indications       Pole obsahující indicie
+     * @param string $expression       Klíč hledané indicie
+     * @return array|null              Identifikátor indicie nebo NULL
      */
-    private function getEmailIndicationsVariables() {
-      return [
-        VAR_INDICATION_SENDER_NAME, VAR_INDICATION_SENDER_EMAIL,
-        VAR_INDICATION_SUBJECT
-      ];
+    public static function findIndicationByExpression($indications, $expression) {
+      $indicationData = null;
+
+      foreach ($indications as $indication) {
+        if (isset($indication['expression']) && $indication['expression'] === $expression) {
+          $indicationData = $indication;
+          break;
+        }
+      }
+
+      return $indicationData;
+    }
+
+
+    /**
+     * Vrátí identifikátor indicie na základě klíče indicie.
+     *
+     * @param array $indications       Pole obsahující indicie
+     * @param string $expression       Klíč hledané indicie
+     * @return int|null                Identifikátor indicie nebo NULL
+     */
+    public static function findIndicationIdByExpression($indications, $expression) {
+      $indication = self::findIndicationByExpression($indications, $expression);
+
+      return $indication['id_indication'] ?? null;
     }
 
 
@@ -286,7 +308,8 @@
       $this->isExpressionTooShort();
       $this->isExpressionTooLong();
       $this->existExpressionInText();
-      $this->isExpressionHTMLtag();
+      $this->isExpressionInValidPlacement();
+      $this->isExpressionNotPartOfVariable();
 
       $this->isTitleEmpty();
       $this->isTitleTooLong();
@@ -368,14 +391,15 @@
 
 
     /**
-     * Ověří, zdali se podezřelý text opravdu nalézá v těle e-mailu (popř. jestli se jedná o proměnnou).
+     * Ověří, zdali se podezřelý text nachází v těle e-mailu, nebo zda jde
+     * o proměnnou, která se může vyskytovat v hlavičce e-mailu.
      *
      * @throws UserError
      */
     private function existExpressionInText() {
-      if (mb_strpos($this->email, $this->expression) === false
-          && !in_array($this->expression, self::getEmailIndicationsVariables())) {
-        throw new UserError('Podezřelý text nebyl v těle e-mailu nalezen.', MSG_ERROR);
+      if (!str_contains($this->email, $this->expression)
+          && !in_array($this->expression, PhishingEmailModel::getEmailHeaderVariables())) {
+        throw new UserError('Podezřelý text nebyl v e-mailu nalezen.', MSG_ERROR);
       }
     }
 
@@ -385,21 +409,77 @@
      *
      * @throws UserError
      */
-    private function isExpressionHTMLtag() {
-      $tags = implode('|', PhishingEmailModel::getHTMLtags(false));
-
-      preg_match_all('/\[a href=(.*?)](.*?)\[\/a]/', Controller::escapeOutput($this->email), $matches);
-
-      foreach ($matches[0] as $match) {
-        if (str_contains($match, $this->expression)) {
-          throw new UserError('Podezřelý text nemůže být součást HTML tagu pro odkaz.', MSG_ERROR);
-        }
+    private function isExpressionInValidPlacement() {
+      // Ověření, zda není cílem zvýraznit HTML tag.
+      if (str_contains($this->expression, '<') || str_contains($this->expression, '>')) {
+        throw new UserError('Podezřelý text nemůže být HTML tag nebo jeho část.', MSG_ERROR);
       }
 
-      if (preg_match('/' . $tags . '/', $this->expression) ||
-          str_contains($this->expression, '[') || str_contains($this->expression, ']') ||
-          str_contains($tags, $this->expression)) {
-        throw new UserError('Podezřelý text nemůže být HTML tag nebo jeho část.', MSG_ERROR);
+      $dom = EmailDomProcessor::loadDom($this->email);
+      $xpath = new DOMXPath($dom);
+
+      $foundValidOccurrence = false;
+
+      // Proměnné používané v hlavičce e-mailu.
+      if (in_array($this->expression, PhishingEmailModel::getEmailHeaderVariables())) {
+        $foundValidOccurrence = true;
+      }
+
+      // Procházení všech textových uzlů.
+      foreach ($xpath->query('//text()') as $textNode) {
+        if (!str_contains($textNode->nodeValue, $this->expression)) {
+          continue;
+        }
+
+        $parent = $textNode->parentNode;
+
+        // Provedení dalších kontrol, pokud je rodič HTML element.
+        if ($parent instanceof DOMElement) {
+          $tag = strtolower($parent->tagName);
+
+          // Výskyt indicie uvnitř odkazu.
+          if ($tag === 'a') {
+            continue;
+          }
+
+          // Výskyt indicie u již zpracovabých elementů (např. už označená indicie, proměnná apod.).
+          if ($parent->hasAttribute('class')) {
+            $class = $parent->getAttribute('class');
+
+            if (str_contains($class, 'email-variable') || str_contains($class, 'indication-link')) {
+              continue;
+            }
+          }
+        }
+
+        $foundValidOccurrence = true;
+        break;
+      }
+
+      if (!$foundValidOccurrence) {
+        throw new UserError('Podezřelý text musí být mimo odkazy nebo již označené prvky.', MSG_ERROR);
+      }
+    }
+
+
+    /**
+     * Ověří, zdali podezřelý text není podřetězcem některé z proměnných.
+     *
+     * @throws UserError
+     */
+    private function isExpressionNotPartOfVariable() {
+      $variables = PhishingEmailModel::getEmailBodyVariables();
+
+      foreach ($variables as $variable) {
+        // Přeskočit přesnou shodu s názvem proměnné.
+        if ($this->expression === $variable) {
+          continue;
+        }
+
+        // Pokud je expression obsaženo uvnitř proměnné → zakázat
+        if (str_contains($variable, $this->expression)) {
+          throw new UserError('Podezřelý text je částečně obsažen v názvu některé z proměnných.', MSG_ERROR);
+        }
       }
     }
 

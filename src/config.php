@@ -426,6 +426,9 @@
 
 
   /* --- PROMĚNNÉ POUŽÍVANÉ V PODVODNÝCH E-MAILECH, KTERÉ JSOU PŘI ODESLÁNÍ NAHRAZENY SKUTEČNÝM OBSAHEM --- */
+  /** Regulární výraz, kterému vyhovují všechny proměnné používané v e-mailu. */
+  define('VAR_REGEXP', '%[a-z_]+%');
+
   /** Uživatelské jméno příjemce e-mailu. */
   define('VAR_RECIPIENT_USERNAME', '%recipient_username%');
 
@@ -456,8 +459,8 @@
   /** URL podvodné stránky. */
   define('VAR_URL', '%url%');
 
-  /** URL podvodné stránky (v HTML odkazu). */
-  define('VAR_URL_HTML', '%url_html%');
+  /** Text nahrazující URL podvodné stránky v náhledu. */
+  define('VAR_URL_PREVIEW', '[URL podvodné stránky]');
 
   /** Identifikátor příjemce pro URL podvodné stránky. */
   define('VAR_RECIPIENT_URL', '%id%');

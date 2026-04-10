@@ -116,7 +116,7 @@
           <div class="col title">
             <div class="url<?php if ($website['http']): ?> http<?php endif; ?>">
               <?php if ($website['http']): ?><span data-feather="alert-triangle"></span>&nbsp;Nezabezpečeno | <?php else: ?><span data-feather="lock"></span><?php endif; ?>
-              <?= $website['url_before_domain'] ?><a href="#indication-url-text" id="indication-url" class="indication anchor-link mark-indication" data-indication="url"><?= $website['domain'] ?><div class="icons top"><div><span data-feather="alert-triangle"></span></div><div><span data-feather="arrow-up-left"></span></div></div></a><?= $website['url_after_domain'] ?>
+              <?= $website['url_before_domain'] ?><a href="#indication-url-text" id="indication-url" class="indication anchor-link mark-indication" data-indication="url"><span class="indication-link"><?= $website['domain'] ?></span><span class="icons"><span class="icon" data-feather="alert-triangle"></span><span class="icon" data-feather="arrow-up-left"></span></span></a><?= $website['url_after_domain'] ?>
             </div>
           </div>
           <div class="col col-1">
