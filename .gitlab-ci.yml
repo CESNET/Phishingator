@@ -14,7 +14,7 @@ stages:
   - export FRAUDULENT_HOSTS_TRAEFIK=$(echo "$FRAUDULENT_HOSTS" | tr ',' '\n' | awk '{printf "Host(`%s`) || ", $0}' | sed 's/ || $//')
 
 build:
-  image: docker:29.5.0-cli
+  image: docker:29.6.1-cli
   stage: build
   before_script:
     - apk add --update --no-cache git
@@ -28,7 +28,7 @@ build:
     name: $CI_COMMIT_REF_SLUG
 
 deploy:
-  image: docker:29.5.0-cli
+  image: docker:29.6.1-cli
   stage: deploy
   before_script:
     - *default_before_script
@@ -46,7 +46,7 @@ deploy:
     on_stop: stop
 
 stop:
-  image: docker:29.5.0-cli
+  image: docker:29.6.1-cli
   stage: deploy
   before_script:
     - *default_before_script
