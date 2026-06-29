@@ -6,13 +6,19 @@ stages:
   - build
   - deploy
 
+.default_before_script: &default_before_script
+  - set -a
+  - source <(printf "%s" "$CONFIG" | grep -E -v '^\s*#|^\s*$')
+  - source "/phishingator-data/${ORG}/.env"
+  - set +a
+  - export FRAUDULENT_HOSTS_TRAEFIK=$(echo "$FRAUDULENT_HOSTS" | tr ',' '\n' | awk '{printf "Host(`%s`) || ", $0}' | sed 's/ || $//')
+
 build:
   image: docker:29.5.0-cli
   stage: build
   before_script:
     - apk add --update --no-cache git
-    - . <(printenv CONFIG | grep -v '^#\|^$\|^\s+$' | sed 's/^/export /')
-    - export FRAUDULENT_HOSTS_TRAEFIK=$(echo $FRAUDULENT_HOSTS | tr ',' '\n' | awk '{printf "Host(`%s`) || ", $0}' | sed 's/ || $//')
+    - *default_before_script
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - docker compose build --pull --no-cache
@@ -25,8 +31,7 @@ deploy:
   image: docker:29.5.0-cli
   stage: deploy
   before_script:
-    - . <(printenv CONFIG | grep -v '^#\|^$\|^\s+$' | sed 's/^/export /')
-    - export FRAUDULENT_HOSTS_TRAEFIK=$(echo $FRAUDULENT_HOSTS | tr ',' '\n' | awk '{printf "Host(`%s`) || ", $0}' | sed 's/ || $//')
+    - *default_before_script
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
     - docker compose pull
@@ -44,8 +49,7 @@ stop:
   image: docker:29.5.0-cli
   stage: deploy
   before_script:
-    - . <(printenv CONFIG | grep -v '^#\|^$\|^\s+$' | sed 's/^/export /')
-    - export FRAUDULENT_HOSTS_TRAEFIK=$(echo $FRAUDULENT_HOSTS | tr ',' '\n' | awk '{printf "Host(`%s`) || ", $0}' | sed 's/ || $//')
+    - *default_before_script
   script:
     - docker compose down
     - docker stop phishingator-${ORG}-web
