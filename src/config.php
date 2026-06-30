@@ -260,9 +260,6 @@
   /** Adresář obsahující soubory s texty (překlady). */
   define('CORE_DIR_LANGUAGES', 'core/languages');
 
-  /** Adresář obsahující další dodatečné knihovny. */
-  define('CORE_DIR_EXTENSIONS', 'extensions');
-
   /** Adresář pro umístění dočasných (temp) souborů. */
   define('CORE_DIR_TEMP', '/tmp');
 

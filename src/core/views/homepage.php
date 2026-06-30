@@ -174,8 +174,8 @@
   <?php endif; ?>
 </div>
 
-<script src="/<?= CORE_DIR_EXTENSIONS ?>/chartjs/chart.umd.min.js?4.5.1" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
-<script src="/<?= CORE_DIR_EXTENSIONS ?>/chartjs/chartjs-plugin-datalabels.min.js?2.2.0" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+<script src="/assets/vendor/chartjs/chart.umd.min.js?4.5.1" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+<script src="/assets/vendor/chartjs/chartjs-plugin-datalabels.min.js?2.2.0" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
 <script nonce="<?= HTTP_HEADER_CSP_NONCE ?>">
   let chartUsersResponses = new Chart(document.getElementById('chart-users-responses'), {
     plugins: [ChartDataLabels],

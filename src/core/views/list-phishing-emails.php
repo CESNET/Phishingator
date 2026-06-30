@@ -1,5 +1,5 @@
 <?php if (count($phishingEmails) > 0): ?>
-<script src="/<?= CORE_DIR_EXTENSIONS ?>/table-sort.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+<script src="/assets/vendor/table-sort.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
 
 <div class="table-responsive">
   <table class="table table-striped table-hover records-list table-sort table-arrows">

@@ -11,8 +11,8 @@
 
     <link rel="icon" type="image/png" href="/favicon.png">
 
-    <link href="/<?= CORE_DIR_EXTENSIONS ?>/bootstrap-4.6.2/bootstrap.min.css" rel="stylesheet">
-    <link href="/style.css?20260410" rel="stylesheet">
+    <link href="/assets/vendor/bootstrap-4.6.2/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css?20260410" rel="stylesheet">
   </head>
 
   <body>
@@ -125,17 +125,17 @@
       </div>
     </div>
 
-    <script src="/<?= CORE_DIR_EXTENSIONS ?>/jquery-3.7.1.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
-    <script src="/<?= CORE_DIR_EXTENSIONS ?>/bootstrap-4.6.2/bootstrap.bundle.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
-    <script src="/<?= CORE_DIR_EXTENSIONS ?>/feather.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+    <script src="/assets/vendor/jquery-3.7.1.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+    <script src="/assets/vendor/bootstrap-4.6.2/bootstrap.bundle.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+    <script src="/assets/vendor/feather.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
 
-    <script src="/portal/js.js?20260530" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
-    <script src="/js.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+    <script src="/assets/js/app.js?20260530" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+    <script src="/assets/js/public.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
     <script nonce="<?= HTTP_HEADER_CSP_NONCE ?>">feather.replace();</script>
 
     <?php if ($userRole == PERMISSION_ADMIN && ($currentSection == 'phishing-emails' || $currentSection == 'phishing-websites') && ($currentAction == ACT_NEW || $currentAction == ACT_EDIT)): ?>
-    <link href="/<?= CORE_DIR_EXTENSIONS ?>/jquery-highlighttextarea/jquery.highlighttextarea.min.css" rel="stylesheet">
-    <script src="/<?= CORE_DIR_EXTENSIONS ?>/jquery-highlighttextarea/jquery.highlighttextarea.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+    <link href="/assets/vendor/jquery-highlighttextarea/jquery.highlighttextarea.min.css" rel="stylesheet">
+    <script src="/assets/vendor/jquery-highlighttextarea/jquery.highlighttextarea.min.js" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
 
     <?php if ($currentSection == 'phishing-emails'): ?>
     <script nonce="<?= HTTP_HEADER_CSP_NONCE ?>">

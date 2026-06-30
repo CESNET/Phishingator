@@ -214,7 +214,7 @@
 
       <div class="col-lg-3 footer-logo">
         <a href="https://www.cesnet.cz" target="_blank">
-          <img src="/img/logo-cesnet.svg" alt="Logo &ndash; CESNET, zájmové sdružení právnických osob">
+          <img src="/assets/images/logo-cesnet.svg" alt="Logo &ndash; CESNET, zájmové sdružení právnických osob">
         </a>
       </div>
     </div>

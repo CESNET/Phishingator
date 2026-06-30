@@ -12,7 +12,7 @@
 </div>
 <?php endif; ?>
 
-<script src="/<?= CORE_DIR_EXTENSIONS ?>/tinymce/tinymce.min.js" referrerpolicy="origin" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
+<script src="/assets/vendor/tinymce/tinymce.min.js" referrerpolicy="origin" nonce="<?= HTTP_HEADER_CSP_NONCE ?>"></script>
 <script nonce="<?= HTTP_HEADER_CSP_NONCE ?>">
   const EMAIL_VARIABLES = <?= $_phishingEmailVariables ?>;
 
@@ -40,7 +40,7 @@
       encoding: 'UTF-8',
       valid_elements: `a[href|target|rel|class|data-indication|style],b[style],strong[style],i[style],em[style],u[style],s[style],br,p[style],ul[style],ol[style],li[style],table[width|cellpadding|cellspacing|border|style],tbody,thead,tr,td[colspan|rowspan|width|align|style],th[colspan|rowspan|width|align|style],span[class|data-url|contenteditable|style],hr,blockquote`,
       valid_styles: {'*': 'color,background-color,text-align,font-weight'},
-      content_css: '/style-email.css',
+      content_css: '/assets/css/style-email.css',
       language: 'cs',
       link_default_target: '_blank',
 

@@ -1,6 +1,6 @@
-@import 'extensions/bootstrap-4.6.2/_functions.scss';
-@import 'extensions/bootstrap-4.6.2/_variables.scss';
-@import 'extensions/bootstrap-4.6.2/mixins/_breakpoints.scss';
+@import '../vendor/bootstrap-4.6.2/_functions.scss';
+@import '../vendor/bootstrap-4.6.2/_variables.scss';
+@import '../vendor/bootstrap-4.6.2/mixins/_breakpoints.scss';
 
 html {
   position: relative;
