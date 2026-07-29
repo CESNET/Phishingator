@@ -193,10 +193,7 @@
     private static function tryKerberosLogin() {
       $validCreds = false;
 
-      $username = escapeshellarg(self::$username);
-      $password = escapeshellarg(self::$password);
-
-      exec('echo ' . $password . ' | kinit ' . $username, $output, $returnCode);
+      $returnCode = CommandRunnerModel::run('/usr/bin/kinit', [self::$username], $output, self::$password);
 
       if ($returnCode === 0) {
         $validCreds = true;

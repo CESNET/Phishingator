@@ -191,7 +191,7 @@
       Logger::info('Request to export a ZIP archive with all phishing campaign data.', $idCampaign);
 
       $zip = new ZipArchive();
-      $zipFilepath = Controller::escapeOutput(CORE_DIR_TEMP . '/' . PHISHING_CAMPAIGN_EXPORT_FILENAME . '-' . $idCampaign . '-' . date('Y-m-d') . '.zip');
+      $zipFilepath = CORE_DIR_TEMP . '/' . PHISHING_CAMPAIGN_EXPORT_FILENAME . '-' . $idCampaign . '-' . date('Y-m-d') . '.zip';
 
       $files = [];
 
@@ -223,7 +223,7 @@
 
         foreach ($files as $file) {
           if (file_exists($file)) {
-            unlink($file);
+            FileManagerModel::deleteFileInDirectory($file, CORE_DIR_TEMP);
           }
         }
 
