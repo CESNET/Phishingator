@@ -1404,6 +1404,8 @@
       $this->isDateActiveSinceGreaterThanDateActiveTo();
       $this->isTimeActiveSinceGreaterThanTimeActiveTo();
       $this->isDatetimeActiveSinceDifferentThanDatetimeActiveTo();
+      $this->isDatetimeActiveSinceInPast();
+      $this->isDatetimeActiveToInPast();
       $this->isDatetimeDiffAtLeastMinutes();
 
       $this->isNotificationLanguageEmpty();
@@ -1635,12 +1637,12 @@
 
 
     /**
-     * Ověří, zdali je ve stejném datu čas zahájení kampaně dříve než čas ukončení kampaně.
+     * Ověří, zdali je při stejném datu čas zahájení kampaně dřívější než čas jejího ukončení.
      *
      * @throws UserError
      */
     private function isTimeActiveSinceGreaterThanTimeActiveTo() {
-      if (strtotime($this->dateActiveSince . ' ' . $this->timeActiveSince) > strtotime($this->dateActiveTo . ' ' . $this->timeActiveTo)) {
+      if ($this->dateActiveSince == $this->dateActiveTo && strtotime($this->dateActiveSince . ' ' . $this->timeActiveSince) > strtotime($this->dateActiveTo . ' ' . $this->timeActiveTo)) {
         throw new UserError('Čas zahájení kampaně nemůže být ve stejném dni později než čas ukončení kampaně.', MSG_ERROR);
       }
     }
@@ -1654,6 +1656,56 @@
     private function isDatetimeActiveSinceDifferentThanDatetimeActiveTo() {
       if (strtotime($this->dateActiveSince . ' ' . $this->timeActiveSince) == strtotime($this->dateActiveTo . ' ' . $this->timeActiveTo)) {
         throw new UserError('Datum a čas zahájení kampaně nemůže být stejné jako datum a čas ukončení kampaně.', MSG_ERROR);
+      }
+    }
+
+
+    /**
+     * Ověří, zdali není datum a čas zahájení kampaně z minulosti.
+     *
+     * @throws UserError
+     */
+    private function isDatetimeActiveSinceInPast() {
+      $datetimeSinceTimestamp = strtotime($this->dateActiveSince . ' ' . $this->timeActiveSince);
+
+      if (isset($this->dbRecordData['id_campaign'])) {
+        $originalDatetime = strtotime($this->dbRecordData['date_active_since'] . ' ' . $this->dbRecordData['time_active_since']);
+
+        if ($datetimeSinceTimestamp < $originalDatetime) {
+          throw new UserError('Datum a čas zahájení kampaně nesmí být starší než původně nastavené datum zahájení.', MSG_ERROR);
+        }
+      }
+      else {
+        $now = time();
+
+        if ($datetimeSinceTimestamp < $now) {
+          throw new UserError('Datum a čas zahájení kampaně nesmí být v minulosti.', MSG_ERROR);
+        }
+      }
+    }
+
+
+    /**
+     * Ověří, zdali není datum a čas ukončení kampaně z minulosti.
+     *
+     * @throws UserError
+     */
+    private function isDatetimeActiveToInPast() {
+      $datetimeToTimestamp = strtotime($this->dateActiveTo . ' ' . $this->timeActiveTo);
+
+      if (isset($this->dbRecordData['id_campaign'])) {
+        $datetimeSinceTimestamp = strtotime($this->dbRecordData['date_active_since'] . ' ' . $this->dbRecordData['time_active_since']);
+
+        if ($datetimeToTimestamp < $datetimeSinceTimestamp) {
+          throw new UserError('Datum a čas ukončení kampaně nesmí být dříve nastavené datum zahájení.', MSG_ERROR);
+        }
+      }
+      else {
+        $now = time();
+
+        if ($datetimeToTimestamp < $now) {
+          throw new UserError('Datum a čas ukončení kampaně nesmí být v minulosti.', MSG_ERROR);
+        }
       }
     }
 
