@@ -297,6 +297,15 @@
     </div>
   </div>
 
+  <?php $input = 'quishing'; ?>
+  <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" name="<?= $formPrefix . $input ?>" id="<?= $formPrefix . $input ?>" class="custom-control-input"<?= (($inputsValues[$input]) ? ' checked' : ''); ?>>
+      <label for="<?= $formPrefix . $input ?>" class="custom-control-label">Poslat jako quishing</label>
+      <small class="form-text text-muted">Odešle v&nbsp;příloze PNG obrázek s&nbsp;QR kódem obsahujícím odkaz na podvodnou stránku vybranou v&nbsp;kampani. Není tak nutné uvádět proměnnou <code><?= VAR_URL ?></code> v&nbsp;těle e-mailu.</small>
+    </div>
+  </div>
+
   <div class="d-flex justify-content-center">
     <button type="submit" name="<?= $formPrefix . $action ?>" class="btn btn-primary btn-lg ml-1 order-2">
       <span data-feather="save"></span>

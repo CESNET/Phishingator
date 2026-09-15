@@ -81,25 +81,45 @@
      * @param string $subject          Předmět e-mailu
      * @param string $body             Tělo e-mailu
      * @param string $html             TRUE, pokud má být e-mail odeslán v HTML, jinak FALSE (výchozí)
+     * @param array $attachment        Příloha k e-mailu (nepovinné)
      * @return bool                    Výsledek odeslání e-mailu
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    protected function sendEmail($senderEmail, $senderName, $recipientEmail, $subject, $body, $html = false) {
-      $this->mailer->setFrom($senderEmail, $senderName);
-      $this->mailer->addAddress($recipientEmail);
+    protected function sendEmail($senderEmail, $senderName, $recipientEmail, $subject, $body, $html = false, $attachment = null) {
+      try {
+        $this->mailer->setFrom($senderEmail, $senderName);
+        $this->mailer->addAddress($recipientEmail);
 
-      $this->mailer->Subject = $subject;
+        $this->mailer->Subject = $subject;
 
-      if ($html) {
-        $this->mailer->isHTML();
-        $this->mailer->AltBody = PhishingEmailModel::convertEmailBodyToPlainText($body);
+        if ($html) {
+          $this->mailer->isHTML();
+          $this->mailer->AltBody = PhishingEmailModel::convertEmailBodyToPlainText($body);
 
-        $body = $this->getHTMLEmailSkeleton($subject, $body);
+          $body = $this->getHTMLEmailSkeleton($subject, $body);
+        }
+        else {
+          $this->mailer->isHTML(false);
+          $this->mailer->AltBody = '';
+        }
+
+        $this->mailer->Body = $body;
+
+        if ($attachment !== null) {
+          $this->mailer->addStringAttachment(
+            $attachment['content'],
+            $attachment['filename'],
+              $attachment['encoding'] ?? 'base64',
+              $attachment['type'] ?? ''
+          );
+        }
+
+        return $this->mailer->send();
       }
-
-      $this->mailer->Body = $body;
-
-      return $this->mailer->send();
+      finally {
+        $this->mailer->clearAddresses();
+        $this->mailer->clearAttachments();
+      }
     }
 
 

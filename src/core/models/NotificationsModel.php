@@ -112,8 +112,9 @@
           'Přidáno:                  ' . $campaign['date_added'] . "\n" .
           'Přidal:                   ' . $campaignDetail['username'] . ' ('  . $campaignDetail['email'] . ')' . "\n\n" .
           'Podvodný e-mail:          ' . $campaignDetail['email_name'] . "\n" .
+          'Typ e-mailu:              ' . PhishingEmailModel::getEmailTypeName($campaignDetail['html'], $campaignDetail['quishing']) . "\n\n" .
           'URL podvodné stránky:     ' . $campaignDetail['url_protocol'] . $campaignDetail['url'] . "\n" .
-          'Šablona podvodné stránky: ' . $campaignDetail['website_name'] . "\n" .
+          'Šablona podvodné stránky: ' . $campaignDetail['website_name'] . "\n\n" .
           'Počet příjemců:           ' . $campaignDetail['count_recipients'] . "\n\n" .
           'Aktivní od:               ' . $campaignDetail['date_active_since_formatted'] . ' (' . $campaignDetail['time_active_since'] . ')' . "\n" .
           'Aktivní do:               ' . $campaignDetail['date_active_to_formatted'] . ' (' . $campaignDetail['time_active_to'] . ')' . "\n\n" .
@@ -132,9 +133,6 @@
 
           // Uložení záznamu o tom, zda se e-mail podařilo odeslat.
           $this->logSentNotificationEmail($campaign['id_campaign'], $recipient['id_user'], 1, $mailResult, $this->mailer->ErrorInfo);
-
-          // Vyčištění pro další iteraci.
-          $this->mailer->clearAddresses();
         }
       }
     }
@@ -182,8 +180,9 @@
           'Přidáno:                  ' . $campaign['date_added'] . "\n" .
           'Přidal:                   ' . $campaignDetail['username'] . ' ('  . $campaignDetail['email'] . ')' . "\n\n" .
           'Podvodný e-mail:          ' . $campaignDetail['email_name'] . "\n" .
+          'Typ e-mailu:              ' . PhishingEmailModel::getEmailTypeName($campaignDetail['html'], $campaignDetail['quishing']) . "\n\n" .
           'URL podvodné stránky:     ' . $campaignDetail['url_protocol'] . $campaignDetail['url'] . "\n" .
-          'Šablona podvodné stránky: ' . $campaignDetail['website_name'] . "\n" .
+          'Šablona podvodné stránky: ' . $campaignDetail['website_name'] . "\n\n" .
           'Počet příjemců:           ' . $campaignDetail['count_recipients'] . "\n\n" .
           'Aktivní od:               ' . $campaignDetail['date_active_since_formatted'] . ' (' . $campaignDetail['time_active_since'] . ')' . "\n" .
           'Aktivní do:               ' . $campaignDetail['date_active_to_formatted'] . ' (' . $campaignDetail['time_active_to'] . ')' . "\n\n" .
@@ -215,9 +214,6 @@
 
           // Uložení záznamu o tom, zda se e-mail podařilo odeslat.
           $this->logSentNotificationEmail($campaign['id_campaign'], $recipient['id_user'], 2, $mailResult, $this->mailer->ErrorInfo);
-
-          // Vyčištění pro další iteraci.
-          $this->mailer->clearAddresses();
         }
       }
     }
@@ -296,9 +292,6 @@
 
           // Uložení záznamu o tom, zda se e-mail podařilo odeslat.
           $this->logSentNotificationEmail($campaign['id_campaign'], $user['id_user'], 3, $mailResult, $this->mailer->ErrorInfo);
-
-          // Vyčištění pro další iteraci.
-          $this->mailer->clearAddresses();
 
           // Uspání skriptu po odeslání určitého množství e-mailů.
           $countSentMails = $this->sleepSender($countSentMails);

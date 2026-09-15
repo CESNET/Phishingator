@@ -71,7 +71,7 @@
           <select name="<?= $formPrefix . $input ?>" id="<?= $formPrefix . $input ?>" class="custom-select set-preview-btn" data-preview-btn="#btn-email-preview" data-preview-link="/portal/phishing-emails" required>
             <option value="0">Vyberte&hellip;</option>
             <?php foreach ($emails as $email): ?>
-            <option value="<?= $email['id_email']; ?>"<?= (($inputsValues[$input] == $email['id_email']) ? ' selected': ''); ?>><?= $email['name'] ?></option>
+            <option value="<?= $email['id_email']; ?>"<?= (($inputsValues[$input] == $email['id_email']) ? ' selected': ''); ?>><?= $email['type'] . ' &ndash; ' . $email['name'] ?></option>
             <?php endforeach; ?>
           </select>
           <small class="form-text text-muted">Podvodný e-mail, který bude doručen zvoleným příjemcům a&nbsp;ze kterého se budou moci dostat na podvodnou stránku.</small>

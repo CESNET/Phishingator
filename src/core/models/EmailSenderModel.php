@@ -105,6 +105,19 @@
               $email, $user, false, false, $campaign['html']
             );
 
+            // Přidání QR kódu do přílohy, pokud jde o quishing.
+            if ($campaign['quishing']) {
+              $emailAttachment = [
+                'content' => PhishingEmailModel::generatePersonalizedQrCode($email['url'], $user['url'], $campaign['id_campaign']),
+                'filename' => 'qr.png',
+                'encoding' => 'base64',
+                'type' => 'image/png'
+              ];
+            }
+            else {
+              $emailAttachment = null;
+            }
+
             Logger::info('Phishing e-mail ready to send.', [
                 'id_campaign' => $campaign['id_campaign'],
                 'id_user' => $user['id_user'],
@@ -112,14 +125,15 @@
                 'recipient' => $recipient,
                 'subject' => $campaign['subject'],
                 'body' => $emailPersonalized['body'],
-                'html' => $campaign['html']
+                'html' => $campaign['html'],
+                'quishing' => $campaign['quishing']
               ]
             );
 
             // Odeslání e-mailu.
             $mailResult = $this->sendEmail(
               $emailPersonalized['sender_email'], $campaign['sender_name'], $recipient,
-              $campaign['subject'], $emailPersonalized['body'], $campaign['html']
+              $campaign['subject'], $emailPersonalized['body'], $campaign['html'], $emailAttachment
             );
 
             // Uložení záznamu o tom, zda se e-mail podařilo odeslat.
@@ -131,9 +145,6 @@
               // Vložení záznamu do databáze o tom, že uživatel zatím na kampaň nereagoval.
               CampaignModel::insertNoReactionRecord($campaign['id_campaign'], $user['id_user'], $recipient, $user['departments']);
             }
-
-            // Vyčištění pro další iteraci.
-            $this->mailer->clearAddresses();
 
             // Uspání skriptu po odeslání určitého množství e-mailů.
             $countSentMails = $this->sleepSender($countSentMails);

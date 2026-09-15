@@ -42,6 +42,11 @@
      */
     protected $html;
 
+    /**
+     * @var int         Proměnná uchovávající informaci o tom, zdali se jedná quishing.
+     */
+    protected $quishing;
+
 
     /**
      * Načte a zpracuje předaná data.
@@ -53,6 +58,7 @@
       parent::load($data);
 
       $this->html = (empty($this->html) ? 0 : 1);
+      $this->quishing = (empty($this->quishing) ? 0 : 1);
       $this->hidden = (empty($this->hidden) ? 0 : 1);
     }
 
@@ -70,6 +76,7 @@
         'subject' => $this->subject,
         'body' => $this->body,
         'html' => $this->html,
+        'quishing' => $this->quishing,
         'hidden' => $this->hidden
       ];
     }
@@ -85,7 +92,7 @@
       $whereFilter = (PermissionsModel::getUserRole() == PERMISSION_TEST_MANAGER) ? 'AND `hidden` = 0' : '';
 
       $this->dbRecordData = Database::querySingle('
-              SELECT `id_email`, `name`, `sender_name`, `sender_email`, `subject`, `body`, `html`, `hidden`
+              SELECT `id_email`, `name`, `sender_name`, `sender_email`, `subject`, `body`, `html`, `quishing`, `hidden`
               FROM `phg_emails`
               WHERE `id_email` = ?
               AND `visible` = 1
@@ -105,7 +112,7 @@
       $whereFilter = (PermissionsModel::getUserRole() == PERMISSION_TEST_MANAGER) ? 'AND `hidden` = 0' : '';
 
       $records = Database::queryMulti('
-              SELECT `id_email`, phg_emails.id_by_user, `name`, `subject`, phg_emails.date_added, `html`, `hidden`,
+              SELECT `id_email`, phg_emails.id_by_user, `name`, `subject`, phg_emails.date_added, `html`, `quishing`, `hidden`,
               `username`, `email`,
               DATE_FORMAT(phg_emails.date_added, "%e. %c. %Y") AS date_added_formatted
               FROM `phg_emails`
@@ -115,6 +122,10 @@
               ' . $whereFilter . '
               ORDER BY `id_email` DESC
       ');
+
+      foreach ($records as &$record) {
+        $record['type'] = self::getEmailTypeName($record['html'], $record['quishing']);
+      }
 
       return UsersModel::setUsernamesByConfig($records);
     }
@@ -249,6 +260,7 @@
           'subject' => $this->dbRecordData['subject'],
           'body' => $this->dbRecordData['body'],
           'html' => $this->dbRecordData['html'],
+          'quishing' => $this->dbRecordData['quishing'],
           'hidden' => $this->dbRecordData['hidden'],
           'date_added' => date('Y-m-d H:i:s')
         ];
@@ -266,6 +278,29 @@
           }
         }
       }
+    }
+
+
+    /**
+     * Vrátí název typu e-mailu na základě jeho vlastností.
+     *
+     * @param bool $html               TRUE, pokud jde o HTML e-mail, jinak FALSE
+     * @param bool $quishing           TRUE, pokud jde o quishing, jinak FALSE
+     * @return string                  Název typu e-mailu
+     */
+    public static function getEmailTypeName($html, $quishing) {
+      if ($html) {
+        $name = 'HTML';
+      }
+      else {
+        $name = 'Plain text';
+      }
+
+      if ($quishing) {
+        $name .= ' (quishing)';
+      }
+
+      return $name;
     }
 
 
@@ -385,6 +420,21 @@
 
 
     /**
+     * Vrátí personalizovanou URL adresu podvodné stránky vůči zvolenému uživateli v dané kampani.
+     *
+     * @param string $url              Základní URL adresa podvodné stránky
+     * @param string $userUrl          Identifikátor uživatele na podvodných stránkách
+     * @param int|null $idCampaign     ID kampaně, se kterou je URL adresa svázána
+     * @return string                  Personalizovaná URL adresa podvodné stránky
+     */
+    private static function personalizeEmailUrl($url, $userUrl, $idCampaign) {
+      return PhishingWebsiteModel::makeWebsiteUrl(
+        $url, WebsitePrependerModel::makeUserWebsiteId($idCampaign, $userUrl)
+      );
+    }
+
+
+    /**
      * Vrátí personalizované tělo e-mailu vůči zvolenému uživateli.
      *
      * @param string $body                   Tělo e-mailu
@@ -398,8 +448,8 @@
       $variables = [];
 
       // Nahrazení proměnné pro odkaz na podvodnou stránku za personalizovaný odkaz.
-      if (!empty($url) && $user !== null && !empty($idCampaign)) {
-        $variables[VAR_URL] = Controller::escapeOutput(PhishingWebsiteModel::makeWebsiteUrl($url, WebsitePrependerModel::makeUserWebsiteId($idCampaign, $user['url'])));
+      if (!empty($url) && !empty($user['url']) && !empty($idCampaign)) {
+        $variables[VAR_URL] = Controller::escapeOutput(self::personalizeEmailUrl($url, $user['url'], $idCampaign));
       }
       else {
         $variables[VAR_URL] = VAR_URL_PREVIEW;
@@ -597,6 +647,34 @@
 
 
     /**
+     * Vygeneruje QR kód pro zadanou URL adresu, která bude případně personalizována.
+     *
+     * @param string $url              URL adresa, která bude uvedena v QR kódu
+     * @param string $userUrl          Identifikátor uživatele na podvodných stránkách (nepovinné)
+     * @param int $idCampaign          ID kampaně, se kterou je URL adresa svázána (nepovinné)
+     * @return string                  Řetězec obsahující QR kód v formátu PNG
+     * @throws \Endroid\QrCode\Exception\ValidationException
+     */
+    public static function generatePersonalizedQrCode($url, $userUrl = null, $idCampaign = null) {
+      // Pokud jsou zadané parametry pro personalizaci, personalizovat URL.
+      if ($userUrl !== null && is_numeric($idCampaign)) {
+        $url = self::personalizeEmailUrl($url, $userUrl, $idCampaign);
+      }
+
+      $builder = new \Endroid\QrCode\Builder\Builder();
+      $builder
+        ->writer(new \Endroid\QrCode\Writer\PngWriter())
+        ->data($url)
+        ->encoding(new \Endroid\QrCode\Encoding\Encoding('UTF-8'))
+        ->errorCorrectionLevel(\Endroid\QrCode\ErrorCorrectionLevel::Low)
+        ->size(300)
+        ->margin(10);
+
+      return $builder->build()->getString();
+    }
+
+
+    /**
      * Zkontroluje uživatelský vstup (atributy třídy), který se bude zapisovat do databáze.
      *
      * @throws UserError
@@ -761,7 +839,7 @@
      * @throws UserError
      */
     private function containBodyPhishingWebsiteVariable() {
-      if (mb_strpos($this->body, VAR_URL) === false) {
+      if (!str_contains($this->body, VAR_URL) && !$this->quishing) {
         throw new UserError(
           'V těle e-mailu chybí použití proměnné "' . VAR_URL . '" pro umístění odkazu na podvodnou stránku.',
           MSG_ERROR

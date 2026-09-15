@@ -119,6 +119,7 @@ CREATE TABLE `phg_emails` (
   `body` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `date_added` datetime NOT NULL,
   `html` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `quishing` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `hidden` tinyint(1) UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint(1) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

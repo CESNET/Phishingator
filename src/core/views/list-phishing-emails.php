@@ -11,6 +11,7 @@
         <th scope="col" class="minw-5-rem">Přidal</th>
         <th scope="col" class="minw-10-rem">Předmět</th>
         <?php if (PermissionsModel::getUserRole() == PERMISSION_ADMIN): ?>
+        <th scope="col">Typ</th>
         <th scope="col" colspan="2" class="disable-sort">Znaky phishingu</th>
         <th scope="col" colspan="3" class="disable-sort"></th>
         <?php else: ?>
@@ -43,6 +44,7 @@
           <?php endif; ?>
         </td>
         <td><?= $email['subject'] ?></td>
+        <td><?= $email['type'] ?></td>
         <?php if (PermissionsModel::getUserRole() == PERMISSION_ADMIN): ?>
         <td class="td-btn pr-0">
           <a href="/portal/<?= $urlSection . '/' . ACT_INDICATIONS . '/' . $email['id_email'] ?>" class="btn btn-info btn-sm mb-2 mb-xl-0" role="button">
