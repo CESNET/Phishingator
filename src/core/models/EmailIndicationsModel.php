@@ -402,10 +402,21 @@
       else {
         // Pokud se má zvýraznit odkaz na podvodnou stráku (resp. přímo proměnná %url%).
         if ($this->expression === VAR_URL) {
+          // Proměnná %url% použitá jako hodnota v argumentu href v odkazu.
           foreach ($xpath->query('//a[@href]') as $node) {
             if ($node->getAttribute('href') === VAR_URL) {
               $foundValidOccurrence = true;
               break;
+            }
+          }
+
+          // Proměnná %url% použitá přímo v textu.
+          if (!$foundValidOccurrence) {
+            foreach ($xpath->query('//text()') as $textNode) {
+              if (str_contains($textNode->nodeValue, VAR_URL)) {
+                $foundValidOccurrence = true;
+                break;
+              }
             }
           }
         }
