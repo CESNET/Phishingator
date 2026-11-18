@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "bootstrap": "4.6.2",
-    "chart.js": "^4.5.1",
+    "chart.js": "^4.6.1",
     "chartjs-plugin-datalabels": "2.2.0",
     "feather-icons": "4.29.2",
     "jquery": "3.7.1",
     "jquery-highlighttextarea": "3.2.1",
     "table-sort-js": "1.22.3",
-    "tinymce": "^8.9.3"
+    "tinymce": "^8.10.2"
   },
   "devDependencies": {
-    "sass": "^1.105.1"
+    "sass": "^1.108.2"
   }
 }
