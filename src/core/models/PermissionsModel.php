@@ -243,19 +243,38 @@
 
 
     /**
-     * Přepne roli aktuálně přihlášeného uživatele.
+     * Přepne roli aktuálně přihlášeného uživatele na základě jeho oprávnění.
      *
-     * @param int $newRole             Identifikátor vybrané role
+     * @param string $newRole          Identifikátor požadované role
+     * @return void
      */
     public static function switchRole($newRole) {
-      // Ověření oprávnění uživatele - měnit role je umožněno pouze správcům testů a administrátorům.
-      if (self::getUserPermission() <= PERMISSION_TEST_MANAGER) {
+      $userPermission = self::getUserPermission();
+
+      if ($userPermission === PERMISSION_ADMIN) {
+        $allowedRoles = [PERMISSION_ADMIN_URL, PERMISSION_TEST_MANAGER_URL, PERMISSION_USER_URL];
+      }
+      elseif ($userPermission === PERMISSION_TEST_MANAGER) {
+        $allowedRoles = [PERMISSION_TEST_MANAGER_URL, PERMISSION_USER_URL];
+      }
+      elseif ($userPermission === PERMISSION_USER) {
+        $allowedRoles = [PERMISSION_USER_URL];
+      }
+      else {
+        $allowedRoles = [];
+      }
+
+      // Ověření požadované role.
+      if (is_string($newRole) && in_array($newRole, $allowedRoles, true)) {
         self::setUserRole($newRole);
       }
       else {
         Logger::warning(
           'Unauthorized attempt to change the user role.',
-          ['id_user' => self::getUserId(), 'new_role' => $newRole]
+          [
+            'id_user' => self::getUserId(),
+            'new_role' => $newRole
+          ]
         );
       }
     }
