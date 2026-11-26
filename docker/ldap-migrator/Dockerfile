@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 WORKDIR /phishingator
 
-COPY docker/ldap-migrator/entrypoint.sh docker/ldap-migrator/run-ldapsearch.sh ./
+COPY docker/ldap-migrator/entrypoint.sh docker/ldap-migrator/common.sh docker/ldap-migrator/run-ldapsearch.sh ./
 RUN chmod +x entrypoint.sh run-ldapsearch.sh
 
 ENTRYPOINT ["./entrypoint.sh"]

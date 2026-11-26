@@ -146,9 +146,11 @@ services:
       - LDAP_MIGRATOR_USER
       - LDAP_MIGRATOR_PASS
       - LDAP_MIGRATOR_BASE_DN
+      - ORG
     volumes:
       - /phishingator-data/${ORG}/certs/ldap.crt:/etc/ssl/certs/ldap.crt:ro
       - /phishingator-data/${ORG}/ldap:/phishingator/ldap
+      - /dev/log:/dev/log:ro
     networks:
       - ldap-migrator-net
 
