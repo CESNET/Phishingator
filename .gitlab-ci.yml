@@ -40,7 +40,7 @@ php-lint:
 
 semgrep:
   stage: test
-  image: semgrep/semgrep:1.180.0-nonroot
+  image: semgrep/semgrep:1.187.0-nonroot
   script:
     - semgrep scan --config p/php --error --metrics=off src/
 
@@ -51,7 +51,7 @@ shellcheck:
     - find scripts docker -type f -name '*.sh' -print0 | xargs -0 -r shellcheck
 
 build:
-  image: docker:29.9.0-cli
+  image: docker:29.10.1-cli
   stage: build
   before_script:
     - apk add --update --no-cache git
@@ -67,7 +67,7 @@ build:
     action: prepare
 
 deploy:
-  image: docker:29.9.0-cli
+  image: docker:29.10.1-cli
   stage: deploy
   resource_group: $CI_COMMIT_REF_SLUG
   before_script:
@@ -84,7 +84,7 @@ deploy:
     on_stop: stop
 
 stop:
-  image: docker:29.9.0-cli
+  image: docker:29.10.1-cli
   stage: deploy
   resource_group: $CI_COMMIT_REF_SLUG
   before_script:
