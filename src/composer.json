@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "require": {
-    "phpmailer/phpmailer": "^7.0",
-    "endroid/qr-code": "^5.1"
+    "phpmailer/phpmailer": "^7.2",
+    "endroid/qr-code": "^6.1"
   }
 }

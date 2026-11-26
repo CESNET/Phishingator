@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "2017882d4ee371eae52744dd7f7fef58",
+  "content-hash": "8ff3abe98abc0c1c5c65a0597e7ff9b8",
   "packages": [
     {
       "name": "bacon/bacon-qr-code",
@@ -59,7 +59,8 @@
         "issues": "https://github.com/Bacon/BaconQrCode/issues",
         "source": "https://github.com/Bacon/BaconQrCode/tree/v3.1.1"
       },
-      "time": "2026-04-05T21:06:35+00:00"
+      "time": "2026-04-05T21:06:35+00:00",
+      "published-time": "2026-04-05T21:07:28+00:00"
     },
     {
       "name": "dasprid/enum",
@@ -109,30 +110,31 @@
         "issues": "https://github.com/DASPRiD/Enum/issues",
         "source": "https://github.com/DASPRiD/Enum/tree/1.0.7"
       },
-      "time": "2025-09-16T12:23:56+00:00"
+      "time": "2025-09-16T12:23:56+00:00",
+      "published-time": "2025-09-16T12:25:04+00:00"
     },
     {
       "name": "endroid/qr-code",
-      "version": "5.1.0",
+      "version": "6.1.3",
       "source": {
         "type": "git",
         "url": "https://github.com/endroid/qr-code.git",
-        "reference": "393fec6c4cbdc1bd65570ac9d245704428010122"
+        "reference": "5fa534856ed95649d67c0eab0cabc03ab1d8e0e2"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/endroid/qr-code/zipball/393fec6c4cbdc1bd65570ac9d245704428010122",
-        "reference": "393fec6c4cbdc1bd65570ac9d245704428010122",
+        "url": "https://api.github.com/repos/endroid/qr-code/zipball/5fa534856ed95649d67c0eab0cabc03ab1d8e0e2",
+        "reference": "5fa534856ed95649d67c0eab0cabc03ab1d8e0e2",
         "shasum": ""
       },
       "require": {
         "bacon/bacon-qr-code": "^3.0",
-        "php": "^8.1"
+        "php": "^8.4"
       },
       "require-dev": {
         "endroid/quality": "dev-main",
         "ext-gd": "*",
-        "khanamiryan/qrcode-detector-decoder": "^2.0.2",
+        "khanamiryan/qrcode-detector-decoder": "^2.0.3",
         "setasign/fpdf": "^1.8.2"
       },
       "suggest": {
@@ -144,7 +146,7 @@
       "type": "library",
       "extra": {
         "branch-alias": {
-          "dev-main": "5.x-dev"
+          "dev-main": "6.x-dev"
         }
       },
       "autoload": {
@@ -173,7 +175,7 @@
       ],
       "support": {
         "issues": "https://github.com/endroid/qr-code/issues",
-        "source": "https://github.com/endroid/qr-code/tree/5.1.0"
+        "source": "https://github.com/endroid/qr-code/tree/6.1.3"
       },
       "funding": [
         {
@@ -181,20 +183,21 @@
           "type": "github"
         }
       ],
-      "time": "2024-09-08T08:52:55+00:00"
+      "time": "2026-02-05T07:01:58+00:00",
+      "published-time": "2026-02-05T07:02:58+00:00"
     },
     {
       "name": "phpmailer/phpmailer",
-      "version": "v7.1.1",
+      "version": "v7.2.0",
       "source": {
         "type": "git",
         "url": "https://github.com/PHPMailer/PHPMailer.git",
-        "reference": "1bc1716a507a65e039d4ac9d9adebbbd0d346e15"
+        "reference": "f5eb50148734d03bbbb81825c722c1889636d51a"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/1bc1716a507a65e039d4ac9d9adebbbd0d346e15",
-        "reference": "1bc1716a507a65e039d4ac9d9adebbbd0d346e15",
+        "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/f5eb50148734d03bbbb81825c722c1889636d51a",
+        "reference": "f5eb50148734d03bbbb81825c722c1889636d51a",
         "shasum": ""
       },
       "require": {
@@ -209,7 +212,7 @@
         "php-parallel-lint/php-console-highlighter": "^1.0.0",
         "php-parallel-lint/php-parallel-lint": "^1.3.2",
         "phpcompatibility/php-compatibility": "^10.0.0@dev",
-        "squizlabs/php_codesniffer": "^3.13.5",
+        "squizlabs/php_codesniffer": "^3.13.6 || ^4.0.2",
         "yoast/phpunit-polyfills": "^1.0.4"
       },
       "suggest": {
@@ -255,7 +258,7 @@
       "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
       "support": {
         "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-        "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.1.1"
+        "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.2.0"
       },
       "funding": [
         {
@@ -263,7 +266,8 @@
           "type": "github"
         }
       ],
-      "time": "2026-05-18T08:06:14+00:00"
+      "time": "2026-11-07T15:15:17+00:00",
+      "published-time": "2026-11-07T15:16:54+00:00"
     }
   ],
   "packages-dev": [],
@@ -274,5 +278,5 @@
   "prefer-lowest": false,
   "platform": {},
   "platform-dev": {},
-  "plugin-api-version": "2.9.0"
+  "plugin-api-version": "2.11.0"
 }

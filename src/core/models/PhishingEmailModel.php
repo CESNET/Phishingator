@@ -661,14 +661,14 @@
         $url = self::personalizeEmailUrl($url, $userUrl, $idCampaign);
       }
 
-      $builder = new \Endroid\QrCode\Builder\Builder();
-      $builder
-        ->writer(new \Endroid\QrCode\Writer\PngWriter())
-        ->data($url)
-        ->encoding(new \Endroid\QrCode\Encoding\Encoding('UTF-8'))
-        ->errorCorrectionLevel(\Endroid\QrCode\ErrorCorrectionLevel::Low)
-        ->size(300)
-        ->margin(10);
+      $builder = new \Endroid\QrCode\Builder\Builder(
+        writer: new \Endroid\QrCode\Writer\PngWriter(),
+        data: $url,
+        encoding: new \Endroid\QrCode\Encoding\Encoding('UTF-8'),
+        errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::Low,
+        size: 300,
+        margin: 10
+      );
 
       return $builder->build()->getString();
     }
